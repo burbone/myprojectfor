@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { Button } from '../atoms/Button'
 import { useAuth } from '@/hooks/useAuth'
@@ -19,7 +21,7 @@ export const Header = () => {
             <Link href="/jobs" className="text-text-secondary hover:text-text-primary">
               Вакансии
             </Link>
-            <Link href="/questions" className="text-text-secondary hover:text-text-primary">
+            <Link href="/interview-questions" className="text-text-secondary hover:text-text-primary">
               Вопросы
             </Link>
             

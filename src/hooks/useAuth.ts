@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { User, LoginCredentials, RegisterCredentials } from '@/types/auth'
+import { User, LoginCredentials, RegisterCredentials, AuthResponse } from '@/types/auth'
 import { authService } from '@/services/auth'
 
 export const useAuth = () => {
@@ -57,9 +57,15 @@ export const useAuth = () => {
     }
   }
 
-  const logout = () => {
-    localStorage.removeItem('token')
-    setUser(null)
+  const logout = async () => {
+    try {
+      await authService.logout()
+      localStorage.removeItem('token')
+      setUser(null)
+    } catch (err) {
+      setError('Ошибка при выходе')
+      throw err
+    }
   }
 
   return {

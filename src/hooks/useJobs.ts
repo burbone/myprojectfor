@@ -31,7 +31,6 @@ export const useJobs = () => {
       setLoading(true)
       setError(null)
       await api.post(`/jobs/${jobId}/apply`)
-      // Обновляем список вакансий после отклика
       await fetchJobs()
     } catch (err) {
       setError('Ошибка при отклике на вакансию')
@@ -45,6 +44,7 @@ export const useJobs = () => {
     jobs,
     loading,
     error,
-    applyToJob
+    applyToJob,
+    fetchJobs
   }
 }

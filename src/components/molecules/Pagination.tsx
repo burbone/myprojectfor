@@ -2,55 +2,67 @@ import { Button } from '../atoms/Button'
 
 interface PaginationProps {
   currentPage: number
-  totalItems: number
-  pageSize: number
+  totalPages: number
   onPageChange: (page: number) => void
 }
 
 export const Pagination = ({
   currentPage,
-  totalItems,
-  pageSize,
-  onPageChange,
+  totalPages,
+  onPageChange
 }: PaginationProps) => {
-  const totalPages = Math.ceil(totalItems / pageSize)
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
   
-  if (totalPages <= 1) return null
+  const renderPageNumbers = () => {
+    const visiblePages = pages.filter(page => {
+      if (page === 1 || page === totalPages) return true
+      if (page >= currentPage - 1 && page <= currentPage + 1) return true
+      return false
+    })
+
+    return visiblePages.map((page, index) => {
+      if (index > 0 && page - visiblePages[index - 1] > 1) {
+        return (
+          <span key={`ellipsis-${page}`} className="px-2">
+            ...
+          </span>
+        )
+      }
+
+      return (
+        <Button
+          key={page}
+          variant={currentPage === page ? 'primary' : 'outline'}
+          size="sm"
+          onClick={() => onPageChange(page)}
+        >
+          {page}
+        </Button>
+      )
+    })
+  }
 
   return (
-    <nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
-      <div className="flex w-0 flex-1">
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Назад
-        </Button>
-      </div>
+    <div className="flex items-center justify-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        Назад
+      </Button>
       
-      <div className="hidden md:flex">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-          <Button
-            key={page}
-            variant={page === currentPage ? 'primary' : 'outline'}
-            onClick={() => onPageChange(page)}
-            className="mx-1"
-          >
-            {page}
-          </Button>
-        ))}
-      </div>
+      {renderPageNumbers()}
       
-      <div className="flex w-0 flex-1 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Вперед
-        </Button>
-      </div>
-    </nav>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        Вперед
+      </Button>
+    </div>
   )
 }

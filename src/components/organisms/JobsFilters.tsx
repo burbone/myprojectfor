@@ -1,22 +1,21 @@
+'use client';
+
 import { Input } from '../atoms/Input'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
+interface JobsFiltersProps {
+  onFilterChange?: () => void;
+}
+
 const employmentTypes = [
   { value: 'full-time', label: 'Полная занятость' },
   { value: 'part-time', label: 'Частичная занятость' },
-  { value: 'remote', label: 'Удаленная работа' },
+  { value: 'project', label: 'Проектная работа' },
   { value: 'internship', label: 'Стажировка' },
 ]
 
-const locations = [
-  { value: 'moscow', label: 'Москва' },
-  { value: 'spb', label: 'Санкт-Петербург' },
-  { value: 'remote', label: 'Удаленно' },
-  { value: 'other', label: 'Другое' },
-]
-
-export const JobsFilters = () => {
+export function JobsFilters({ onFilterChange }: JobsFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -29,58 +28,56 @@ export const JobsFilters = () => {
     [searchParams]
   )
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    router.push(`/jobs?${createQueryString('search', value)}`)
+    onFilterChange?.()
+  }
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    router.push(`/jobs?${createQueryString('location', value)}`)
+    onFilterChange?.()
+  }
+
+  const handleEmploymentTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value
+    router.push(`/jobs?${createQueryString('employmentType', value)}`)
+    onFilterChange?.()
+  }
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <h2 className="text-lg font-semibold mb-4">Фильтры</h2>
-      
-      <div className="space-y-4">
-        <Input
-          label="Поиск"
-          type="search"
-          placeholder="Название вакансии или компании"
-          value={searchParams.get('search') ?? ''}
-          onChange={(e) => {
-            router.push(`/jobs?${createQueryString('search', e.target.value)}`)
-          }}
-        />
-
-        <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Тип занятости</h3>
-          <div className="space-y-2">
-            {employmentTypes.map((type) => (
-              <label key={type.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={searchParams.get('employmentType') === type.value}
-                  onChange={(e) => {
-                    router.push(`/jobs?${createQueryString('employmentType', e.target.checked ? type.value : '')}`)
-                  }}
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-600">{type.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Локация</h3>
-          <div className="space-y-2">
-            {locations.map((location) => (
-              <label key={location.value} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={searchParams.get('location') === location.value}
-                  onChange={(e) => {
-                    router.push(`/jobs?${createQueryString('location', e.target.checked ? location.value : '')}`)
-                  }}
-                  className="rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <span className="ml-2 text-sm text-gray-600">{location.label}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+    <div className="bg-white p-6 rounded-lg shadow-card space-y-4">
+      <Input
+        label="Поиск по названию или компании"
+        placeholder="Frontend Developer, Google..."
+        value={searchParams.get('search') || ''}
+        onChange={handleSearchChange}
+      />
+      <Input
+        label="Местоположение"
+        placeholder="Москва, удаленно..."
+        value={searchParams.get('location') || ''}
+        onChange={handleLocationChange}
+      />
+      <div>
+        <label htmlFor="employmentType" className="block text-sm font-medium text-gray-700 mb-1">
+          Тип занятости
+        </label>
+        <select
+          id="employmentType"
+          name="employmentType"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+          value={searchParams.get('employmentType') || ''}
+          onChange={handleEmploymentTypeChange}
+        >
+          <option value="">Все</option>
+          {employmentTypes.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   )

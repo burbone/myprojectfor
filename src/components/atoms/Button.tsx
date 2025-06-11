@@ -1,57 +1,57 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { ButtonHTMLAttributes, forwardRef } from 'react'
+import { VariantProps, cva } from 'class-variance-authority'
+import { cn } from '@/utils/cn'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline'
-  size?: 'sm' | 'md' | 'lg'
-  children: ReactNode
-  fullWidth?: boolean
+const buttonVariants = cva(
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background',
+  {
+    variants: {
+      variant: {
+        primary: 'bg-primary text-white hover:bg-primary-hover',
+        secondary: 'bg-secondary text-white hover:bg-secondary-hover',
+        outline: 'border border-input hover:bg-accent hover:text-accent-foreground',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'underline-offset-4 hover:underline text-primary',
+      },
+      size: {
+        default: 'h-10 py-2 px-4',
+        sm: 'h-9 px-3 rounded-md',
+        lg: 'h-11 px-8 rounded-md',
+        icon: 'h-10 w-10',
+      },
+      fullWidth: {
+        true: 'w-full',
+      },
+    },
+    defaultVariants: {
+      variant: 'primary',
+      size: 'default',
+      fullWidth: false,
+    },
+  }
+)
+
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   as?: 'button' | 'a'
   href?: string
 }
 
-export const Button = ({
-  variant = 'primary',
-  size = 'md',
-  children,
-  className,
-  fullWidth,
-  as: Component = 'button',
-  href,
-  ...props
-}: ButtonProps) => {
-  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors'
-  
-  const variants = {
-    primary: 'bg-primary text-white hover:bg-primary-hover focus:ring-primary',
-    secondary: 'bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary',
-    outline: 'border border-gray-300 text-text-primary hover:bg-gray-50 focus:ring-primary'
-  }
-  
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base'
-  }
-  
-  const width = fullWidth ? 'w-full' : ''
-  
-  const classes = twMerge(baseStyles, variants[variant], sizes[size], width, className)
-
-  if (Component === 'a' && href) {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, fullWidth, as = 'button', href, ...props }, ref) => {
+    const Comp = as
     return (
-      <a href={href} className={classes} {...props}>
-        {children}
-      </a>
+      <Comp
+        className={cn(buttonVariants({ variant, size, fullWidth, className }))}
+        ref={ref}
+        href={as === 'a' ? href : undefined}
+        {...props}
+      />
     )
   }
+)
 
-  return (
-    <button
-      className={classes}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
+Button.displayName = 'Button'
+
+export { Button, buttonVariants }

@@ -1,51 +1,51 @@
-import { Question } from '@/types/question'
+import { Card } from '../atoms/Card'
+import { Typography } from '../atoms/Typography'
+import { Badge } from '../atoms/Badge'
 import { Button } from '../atoms/Button'
-import Link from 'next/link'
+import { Question } from '@/types/question'
 
 interface QuestionCardProps {
   question: Question
+  onStartTraining: (questionId: string) => void
 }
 
-export const QuestionCard = ({ question }: QuestionCardProps) => {
+export const QuestionCard = ({ question, onStartTraining }: QuestionCardProps) => {
   return (
-    <article className="bg-white rounded-lg shadow-card hover:shadow-lg transition-shadow p-6">
-      <div className="flex justify-between items-start">
+    <Card>
+      <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold text-text-primary">
-            <Link href={`/interview-questions/${question.id}`} className="hover:text-primary">
-              {question.title}
-            </Link>
-          </h3>
-          <p className="mt-1 text-sm text-text-secondary">
-            {question.category}
-          </p>
+          <Typography variant="h3" className="mb-2">
+            {question.title}
+          </Typography>
+          <Typography variant="p" className="text-text-secondary">
+            {question.description}
+          </Typography>
         </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {question.tags.map((tag) => (
-          <span
-            key={tag}
-            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-primary"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <p className="mt-4 text-sm text-text-secondary line-clamp-2">
-        {question.preview}
-      </p>
-
-      <div className="mt-6 flex justify-end">
-        <Button
-          variant="primary"
-          as={Link}
-          href={`/interview-questions/${question.id}`}
+        <Badge 
+          variant={
+            question.difficulty === 'easy' 
+              ? 'success' 
+              : question.difficulty === 'medium' 
+                ? 'warning' 
+                : 'danger'
+          }
         >
-          Читать ответ
+          {question.difficulty}
+        </Badge>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <div className="flex gap-2">
+          {question.tags.map(tag => (
+            <Badge key={tag} variant="secondary" size="sm">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+        <Button onClick={() => onStartTraining(question.id)}>
+          Начать тренировку
         </Button>
       </div>
-    </article>
+    </Card>
   )
 }

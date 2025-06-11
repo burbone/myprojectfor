@@ -1,38 +1,42 @@
-import { HTMLAttributes, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { HTMLAttributes, forwardRef } from 'react'
+import { VariantProps, cva } from 'class-variance-authority'
+import { cn } from '@/utils/cn'
 
-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  children: ReactNode
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning'
-  size?: 'sm' | 'md'
-}
+const badgeVariants = cva(
+  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  {
+    variants: {
+      variant: {
+        default: 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        outline: 'text-foreground',
+        success: 'border-transparent bg-green-500 text-white hover:bg-green-600',
+        warning: 'border-transparent bg-yellow-500 text-white hover:bg-yellow-600',
+        error: 'border-transparent bg-red-500 text-white hover:bg-red-600',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+)
 
-const variants = {
-  primary: 'bg-primary/10 text-primary',
-  secondary: 'bg-secondary/10 text-secondary',
-  success: 'bg-green-100 text-green-800',
-  danger: 'bg-red-100 text-red-800',
-  warning: 'bg-yellow-100 text-yellow-800'
-}
+export interface BadgeProps
+  extends HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof badgeVariants> {}
 
-const sizes = {
-  sm: 'px-2 py-0.5 text-xs',
-  md: 'px-2.5 py-0.5 text-sm'
-}
+const Badge = forwardRef<HTMLDivElement, BadgeProps>(
+  ({ className, variant, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(badgeVariants({ variant }), className)}
+        {...props}
+      />
+    )
+  }
+)
 
-export const Badge = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  className,
-  ...props
-}: BadgeProps) => {
-  const baseStyles = 'inline-flex items-center rounded-full font-medium'
-  const classes = twMerge(baseStyles, variants[variant], sizes[size], className)
+Badge.displayName = 'Badge'
 
-  return (
-    <span className={classes} {...props}>
-      {children}
-    </span>
-  )
-}
+export { Badge, badgeVariants }

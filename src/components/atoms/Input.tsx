@@ -1,36 +1,34 @@
-import { InputHTMLAttributes, forwardRef } from 'react'
-import { twMerge } from 'tailwind-merge'
+'use client'
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+import { InputHTMLAttributes, forwardRef } from 'react'
+import { cn } from '@/utils/cn'
+
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
   error?: string
-  fullWidth?: boolean
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className, fullWidth, ...props }, ref) => {
-    const baseStyles = 'block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm'
-    const errorStyles = error ? 'border-red-300 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-red-500' : ''
-    const width = fullWidth ? 'w-full' : ''
-    
-    const classes = twMerge(baseStyles, errorStyles, width, className)
-
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, label, error, type = 'text', ...props }, ref) => {
     return (
-      <div className={width}>
+      <div className="space-y-2">
         {label && (
-          <label className="block text-sm font-medium text-text-primary mb-1">
+          <label className="block text-sm font-medium text-text-primary">
             {label}
           </label>
         )}
         <input
+          type={type}
+          className={cn(
+            'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            error && 'border-red-500 focus-visible:ring-red-500',
+            className
+          )}
           ref={ref}
-          className={classes}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-red-600">
-            {error}
-          </p>
+          <p className="text-sm text-red-500">{error}</p>
         )}
       </div>
     )
@@ -38,3 +36,5 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 )
 
 Input.displayName = 'Input'
+
+export { Input }

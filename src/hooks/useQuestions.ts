@@ -31,7 +31,7 @@ export const useQuestions = () => {
       setLoading(true)
       setError(null)
       await api.post(`/questions/${questionId}/start-training`)
-      // Здесь можно добавить логику для начала тренировки
+      await fetchQuestions()
     } catch (err) {
       setError('Ошибка при начале тренировки')
       throw err
@@ -44,6 +44,7 @@ export const useQuestions = () => {
     questions,
     loading,
     error,
-    startTraining
+    startTraining,
+    fetchQuestions
   }
 }

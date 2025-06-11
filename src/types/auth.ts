@@ -1,8 +1,10 @@
 export interface User {
     id: string
     email: string
-    name?: string
-    avatar?: string
+    name: string
+    role: 'user' | 'admin'
+    createdAt: string
+    updatedAt: string
   }
   
   export interface AuthResponse {
@@ -16,12 +18,6 @@ export interface User {
   }
   
   export interface RegisterCredentials extends LoginCredentials {
-    name?: string
-  }
-  
-  export interface AuthState {
-    user: User | null
-    token: string | null
-    isAuthenticated: boolean
-    isLoading: boolean
+    name: string
+    confirmPassword: string
   }

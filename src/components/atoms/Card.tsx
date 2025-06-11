@@ -1,31 +1,23 @@
-import { HTMLAttributes, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { HTMLAttributes, forwardRef } from 'react'
+import { cn } from '@/utils/cn'
 
-interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode
-  className?: string
-  padding?: 'none' | 'sm' | 'md' | 'lg'
-}
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {}
 
-const paddingVariants = {
-  none: '',
-  sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8'
-}
+const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'rounded-lg border bg-card text-card-foreground shadow-sm',
+          className
+        )}
+        {...props}
+      />
+    )
+  }
+)
 
-export const Card = ({
-  children,
-  className,
-  padding = 'md',
-  ...props
-}: CardProps) => {
-  const baseStyles = 'bg-white rounded-lg shadow-sm border border-gray-200'
-  const classes = twMerge(baseStyles, paddingVariants[padding], className)
+Card.displayName = 'Card'
 
-  return (
-    <div className={classes} {...props}>
-      {children}
-    </div>
-  )
-}
+export { Card }

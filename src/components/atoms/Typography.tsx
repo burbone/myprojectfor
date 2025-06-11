@@ -1,35 +1,38 @@
-import { HTMLAttributes, ReactNode } from 'react'
-import { twMerge } from 'tailwind-merge'
+import { HTMLAttributes, forwardRef } from 'react'
+import { cn } from '@/utils/cn'
 
-interface TypographyProps extends HTMLAttributes<HTMLElement> {
+export interface TypographyProps extends HTMLAttributes<HTMLElement> {
   variant: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span'
-  children: ReactNode
-  className?: string
+  children: React.ReactNode
 }
 
-const variants = {
-  h1: 'text-4xl font-bold tracking-tight text-text-primary sm:text-5xl',
-  h2: 'text-3xl font-bold tracking-tight text-text-primary sm:text-4xl',
-  h3: 'text-2xl font-bold text-text-primary sm:text-3xl',
-  h4: 'text-xl font-bold text-text-primary sm:text-2xl',
-  h5: 'text-lg font-bold text-text-primary sm:text-xl',
-  h6: 'text-base font-bold text-text-primary sm:text-lg',
-  p: 'text-base text-text-secondary',
-  span: 'text-base text-text-secondary'
-}
+const Typography = forwardRef<HTMLElement, TypographyProps>(
+  ({ className, variant, children, ...props }, ref) => {
+    const Component = variant
 
-export const Typography = ({
-  variant,
-  children,
-  className,
-  ...props
-}: TypographyProps) => {
-  const Component = variant
-  const classes = twMerge(variants[variant], className)
+    const styles = {
+      h1: 'scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl',
+      h2: 'scroll-m-20 text-3xl font-semibold tracking-tight',
+      h3: 'scroll-m-20 text-2xl font-semibold tracking-tight',
+      h4: 'scroll-m-20 text-xl font-semibold tracking-tight',
+      h5: 'scroll-m-20 text-lg font-semibold tracking-tight',
+      h6: 'scroll-m-20 text-base font-semibold tracking-tight',
+      p: 'leading-7 [&:not(:first-child)]:mt-6',
+      span: 'text-sm',
+    }
 
-  return (
-    <Component className={classes} {...props}>
-      {children}
-    </Component>
-  )
-}
+    return (
+      <Component
+        className={cn(styles[variant], className)}
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </Component>
+    )
+  }
+)
+
+Typography.displayName = 'Typography'
+
+export { Typography }
